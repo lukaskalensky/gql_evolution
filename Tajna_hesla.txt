@@ -1,0 +1,2 @@
+pgadmin: anoyne@anywhere.com  example
+db: host.docker.internal postgres example

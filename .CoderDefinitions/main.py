@@ -1,33 +1,42 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv  # <-- Přidáno
 
 import uvicorn
-
 from pydantic_ai import Agent
-from pydantic_ai_harness import Coder
+from pydantic_ai.capabilities import LocalWorkspace
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai_harness import Coder
 
+# Načte proměnné ze souboru .env v kořenu projektu
+load_dotenv()
 
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 
 
 def create_model() -> OpenAIChatModel:
+    base_url = os.getenv("OPENAI_BASE_URL", "https://chat.unob.cz/api")
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    if not api_key:
+        raise ValueError("Chybí proměnná prostředí OPENAI_API_KEY. Přidej ji do .env souboru.")
+
     provider = OpenAIProvider(
-        base_url=os.environ["AI_BASE_URL"],
-        api_key=os.environ["AI_API_KEY"],
+        base_url=base_url,
+        api_key=api_key,
     )
 
     return OpenAIChatModel(
-        os.environ["AI_MODEL"],
+        "gpt-5-nano",
         provider=provider,
     )
-
 
 def create_agent() -> Agent:
     return Agent(
         create_model(),
         capabilities=[
+            LocalWorkspace(REPOSITORY_ROOT),
             Coder(REPOSITORY_ROOT),
         ],
         instructions="""
@@ -61,8 +70,8 @@ def main():
 
     print("PydanticAI Coder")
     print(f"workspace: {REPOSITORY_ROOT}")
-    print(f"model: {os.environ['AI_MODEL']}")
-    print(f"endpoint: {os.environ['AI_BASE_URL']}")
+    print(f"model: gpt-5-nano")
+    print(f"endpoint: https://chat.unob.cz/api")
     print("web: http://localhost:7932")
 
     uvicorn.run(

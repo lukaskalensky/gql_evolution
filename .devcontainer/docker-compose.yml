@@ -5,7 +5,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
 
     env_file:
-      - ../environment.dev.txt
+      - ../environment.txt
 
     volumes:
       - ..:/workspaces/project:cached

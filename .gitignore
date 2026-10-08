@@ -32,3 +32,4 @@ yarn-error.log*
 
 config.json
 data.json
+hesla.env

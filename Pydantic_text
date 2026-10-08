@@ -1,0 +1,74 @@
+Třídím obsah adresáře src/DBDefinitions v repository a shrnu, co v něm je a k čemu to slouží.
+
+Co najdete v src/DBDefinitions (přehled na vysoké úrovni)
+
+Base model a helpery
+File: src/DBDefinitions/BaseModel.py
+Obsah: definice BaseDBModel (zákl. třída pro mapované DB modely), pomocné funkce UUIDColumn a UUIDFKey pro sloupce a cizí klíče, typ IDType (uuid.UUID) a několik statických polí pro základní metadata (created, lastchange, createdby_id, changedby_id, rbacobject_id).
+Domain: Events (ukázkový domain model)
+Folder: src/DBDefinitions/Domain_Events/
+EventModel.py
+Tabulka: events
+Obsahuje: definici modelu EventModel s poli jako name, name_en, description, startdate, enddate, place, facility_id, type_id, relace na EventTypeModel, vlastní vypočtené (hybrid) vlastnosti duration a valid, rekurzivní vztahy (masterevent/subevents), atd.
+EventInvitationModel.py
+Tabulka: event_invitations
+Obsahuje: event_id, user_id, state_id a relaci na EventModel
+EventTypeModel.py
+Tabulka: eventtypes
+Obsahuje: hierarchické (self-referencované) typy událostí (parent/children), pole name/name_en, parent_id, relace na souvisejé EventModel
+Poznámka: tyto modely dědí od BaseDBModel a používají pomocné UUIDColumn/UUIDFKey pro consistentní definici primárních klíčů a FK.
+Exporty a registry
+init.py na úrovni DBDefinitions
+File: src/DBDefinitions/init.py
+Co dělá: importuje BaseDBModel a domainové modely (EventModel, EventInvitationModel, EventTypeModel), definuje startEngine (asynchronní engine pro spojení s DB), ComposeConnectionString (načítá connection string z env proměnných), a veřejně exportuje názvy (v all).
+Důležité: tvoří spojovací bod pro běh testů nebo seed/inicializaci DB.
+init.py domény Domain_Events
+File: src/DBDefinitions/Domain_Events/init.py
+Co dělá: exportuje EventModel, EventInvitationModel, EventTypeModel a definuje all.
+Nástroje a utility pro DB
+File: src/DBDefinitions/main.py
+Co dělá: CLI nástroj pro práci s DB modelem (create/get/list/update/delete) přímo přes SQLAlchemy mapované třídy. Obsahuje helpery pro parsování payloadů, serializaci, konverzi dat a spouštění asynchronních operací.
+Doplňkové
+File: src/DBDefinitions/runtime.py
+Pravděpodobně obsahuje runtime konfigurace (podle názvu), i když v šíři repa nebyl podrobně rozebrán.
+File: src/DBDefinitions/README.md
+Obsahuje poznámky a návod k DBDefinitions.
+Import a relexe/registrace
+DBDefinitions/init.py a Domain_Events/init.py zajišťují, že SQLAlchemy modely budou registrovány a metadata mohou být vytvářena.
+Jak to používám a jaké to má souvislosti v architektuře
+
+DB modely jsou navázány na BaseDBModel (z BaseModel.py), což zajišťuje jednotný set polí (id, created, lastchange, createdby_id, changedby_id, rbacobject_id).
+Domain_Events obsahuje modely pro události a jejich vztahy (EventModel, EventInvitationModel, EventTypeModel). Tyto modely reprezentují tabulky events, event_invitations a eventtypes a definují vztahy mezi sebou (FK, vztahy, self-referentialní hierarchie u eventtypes).
+Import a registrace:
+import z src.DBDefinitions umožní, když aplikace spouští startEngine a startuje connection string. Exporty v all na úrovni DBDefinitions usnadňují importování aktuálních modelů (např. z tests nebo seed nástrojů).
+Seed/seedování a CLI:
+main.py poskytuje CLI pro interakci s DB modelem na úrovni CRUD pro jednotlivé entity. Důležité pro rychlé testy a manuální seedování/demonstraci.
+Schema a GraphQL vrstva:
+Toto konkrétně není přímo GraphQL vrstva; ale DBDefinitions poskytuje definice entit, které se následně registrují do loaderů, služeb a GraphQL modelů v dalších vrstvách.
+Co konkrétně je v DBDefinitions a jaké soubory najdete (stručný seznam)
+
+src/DBDefinitions/BaseModel.py
+Definuje BaseDBModel, IDType, UUIDColumn, UUIDFKey.
+src/DBDefinitions/Domain_Events/EventModel.py
+EventModel s tabulkou events a kompletní strukturou polí a vztahů.
+src/DBDefinitions/Domain_Events/EventInvitationModel.py
+EventInvitationModel s tabulkou event_invitations a relacemi na EventModel.
+src/DBDefinitions/Domain_Events/EventTypeModel.py
+EventTypeModel s tabulkou eventtypes a self-referencemi (parent/children).
+src/DBDefinitions/Domain_Events/init.py
+Exporty pro Domain_EventsModely.
+src/DBDefinitions/init.py
+Start engine, ComposeConnectionString, exporty a all pro hlavní DBDefinitions.
+src/DBDefinitions/main.py
+CLI nástroj pro CRUD operace nad mapovanými entitami (Event, EventModel, atd.) a jejich payloady.
+src/DBDefinitions/runtime.py
+runtime konfigurace (podmínky, startup, apod.).
+src/DBDefinitions/README.md
+Dokumentace k DBDefinitions.
+Pokud chceš, můžu:
+
+vypsat konkrétní části kódu (např. části tříd z EventModel.py nebo definice BaseDBModel) a vysvětlit, co znamenají,
+připravit dify/změny, pokud máš v plánu rozšířit DB o novou entitu (např. XModel),
+ukázat, jak se importují tyto modely do loaderů a GraphQL vrstvy podle stávající architektury,
+spustit testy, pokud mi poskytneš prostředí a požadavek na konkrétní testy.
+Napiš prosím, co konkrétně chceš, aby následovalo (např. ukázku kódu z EventModel, nebo implementační krok pro novou entitu X).

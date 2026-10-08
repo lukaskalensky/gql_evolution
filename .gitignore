@@ -25,10 +25,11 @@
 .env.test.local
 .env.production.local
 *env*.txt
-
+.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
 config.json
 data.json
+hesla.env

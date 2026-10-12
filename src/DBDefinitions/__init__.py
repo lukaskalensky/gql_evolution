@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from .BaseModel import BaseDBModel, IDType, UUIDColumn, UUIDFKey
 from .Domain_Events import EventModel, EventInvitationModel, EventTypeModel
+from .Domain_Tags import TagModel, TagEntityModel
 
 
 async def startEngine(connectionstring, makeDrop=False, makeUp=True):
@@ -71,6 +72,6 @@ def ComposeConnectionString():
 __all__ = [
     'BaseDBModel', 'IDType', 'UUIDColumn', 'UUIDFKey',
     'EventModel', 'EventInvitationModel', 'EventTypeModel',
-    'startEngine', 'ComposeConnectionString', 'EventTypeModel'
+    'TagModel', 'TagEntityModel',
+    'startEngine', 'ComposeConnectionString'
 ]
-

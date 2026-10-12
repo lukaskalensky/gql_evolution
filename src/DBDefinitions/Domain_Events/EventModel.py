@@ -22,7 +22,6 @@ from src.DBDefinitions.BaseModel import BaseDBModel, UUIDColumn, UUIDFKey, IDTyp
 #
 ###########################################################################################################################
 
-# Zde vytvorit TagModel
 class EventModel(BaseDBModel):
     __tablename__ = "events"
 

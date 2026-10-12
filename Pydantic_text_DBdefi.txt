@@ -1,0 +1,122 @@
+V databázové vrstvě (src/DBDefinitions) byla implementována podpora pro doménu tagů (gql_metadata/Tags) se všemi požadovanými atributy a vazbami:
+
+1. Implementované modely
+TagModel (src/DBDefinitions/Domain_Tags/TagModel.py):
+Tabulka: tags
+Dědí z BaseDBModel (poskytuje id, created, lastchange, createdby_id, changedby_id, rbacobject_id)
+Sloupce:
+name – interní název tagu (Mapped[Optional[str]])
+label – zobrazovaný název (Mapped[Optional[str]])
+color – barva tagu (Mapped[Optional[str]])
+description – popis významu tagu (Mapped[Optional[str]])
+Relace:
+tag_entities – vazba 1:N na TagEntityModel
+TagEntityModel (src/DBDefinitions/Domain_Tags/TagEntityModel.py):
+Tabulka: tag_entities
+Dědí z BaseDBModel
+Sloupce:
+entity_id – identifikátor označené entity (Mapped[Optional[IDType]], libovolná entita systému)
+entity_type_id – typ označené entity (Mapped[Optional[IDType]])
+tag_id – identifikátor přiřazeného tagu (Mapped[Optional[IDType]], cizí klíč ForeignKey("tags.id"))
+owner_id – vlastník přiřazení (Mapped[Optional[IDType]], cizí klíč ForeignKey("users.id"))
+Relace:
+tag – vazba N:1 na TagModel
+2. Integrace a exporty
+src/DBDefinitions/Domain_Tags/__init__.py – exportuje TagModel a TagEntityModel.
+src/DBDefinitions/Domain_Metadata/__init__.py – alias/re-export pro kontext gql_metadata.
+src/DBDefinitions/__init__.py – exportuje TagModel i TagEntityModel a registruje je do SQLAlchemy metadat (BaseDBModel.registry.mappers).
+systemdata.json – doplněny sekce pro tags a tag_entities.
+3. Ověření a testy
+Vytvořena nová testovací sada v tests/db/test_TagModel.py:
+test_tag_model_attributes – ověření názvu tabulky, sloupců a relací TagModel.
+test_tag_entity_model_attributes – ověření sloupců a vazeb TagEntityModel.
+test_imports_and_registry_consistency – ověření konzistence importů a indexace v DBDefinitions.main (iter_mapped_classes, build_entity_index).
+test_tag_model_direct_crud – asynchronní Create, Read, Update, Delete operace na TagModel.
+test_tag_entity_relationship – obousměrné načítání relací přes selectinload.
+test_main_cli_operations_with_tags – ověření integračních funkcí op_create, op_get, op_list, op_update, op_delete včetně parametru include.
+Provedeny architektonické testy (tests/test_architecture.py) a kontrola závislostí (tests/test_dependencies.py). Všechny testy prošly.
+
+
+
+
+Pro entitu TagEntity byla detailně ověřena a zkompletována databázová vrstva včetně dedikované testovací sady pokrývající požadované chování.
+
+1. Definice modelu TagEntityModel
+Soubor: src/DBDefinitions/Domain_Tags/TagEntityModel.py
+
+Tabulka: tag_entities
+Dědičnost: BaseDBModel (poskytuje standardní systémové sloupce id, created, lastchange, createdby_id, changedby_id, rbacobject_id).
+Mapované sloupce:
+entity_id: Mapped[Optional[IDType]] = UUIDFKey(nullable=True, comment="identifikátor označené entity")
+– identifikátor libovolné entity informačního systému (např. Project A).
+entity_type_id: Mapped[Optional[IDType]] = UUIDFKey(nullable=True, comment="typ označené entity")
+– typ označené entity.
+tag_id: Mapped[Optional[IDType]] = mapped_column(ForeignKey("tags.id"), index=True, nullable=True, default=None, comment="identifikátor přiřazeného tagu")
+– cizí klíč odkazující na TagModel.
+owner_id: Mapped[Optional[IDType]] = UUIDFKey(ForeignKey("users.id"), nullable=True, default=None, comment="vlastník tohoto přiřazení")
+– vlastník přiřazení tagu (uživatel).
+Vazba:
+tag: Mapped[Optional["TagModel"]] = relationship("TagModel", back_populates="tag_entities", uselist=False, init=False)
+– propojení na definici tagu s protilehlou relací tag_entities na TagModel.
+2. Exporty a registrace
+src/DBDefinitions/Domain_Tags/__init__.py – exportuje TagEntityModel.
+src/DBDefinitions/Domain_Metadata/__init__.py – re-export pro subgraf gql_metadata.
+src/DBDefinitions/__init__.py – exportuje TagEntityModel v kořenovém balíčku DBDefinitions a registruje jej do BaseDBModel.registry.mappers.
+systemdata.json – registrována tabulka tag_entities.
+3. Testy a ověření
+Byl vytvořen dedikovaný testovací modul tests/db/test_TagEntityModel.py:
+
+test_tag_entity_model_structure – validace struktury tabulky tag_entities, cizího klíče tags.id, indexů a sloupců.
+test_tag_entity_model_exports – validace konzistence napříč exporty a vyhledávacím indexem main.py (TagEntityModel, TagEntity, tag_entities, tagentity).
+test_assign_multiple_tags_to_entity – explicitní test uživatelského use-case z popisu:
+Vytvoření tagů "Důležité" a "K projednání".
+Přiřazení obou tagů k jedné entitě (Project A).
+Ověření dotazu na všechny tagy daného projektu.
+Ověření reverzního dotazu na entity označené konkrétním tagem.
+test_tag_entity_direct_crud – asynchronní vytvoření, načtení, aktualizace (např. změna vlastníka) a smazání přiřazení.
+test_tag_entity_main_cli_operations – integrační ověření funkcí op_create, op_get (včetně include=["tag"]), op_list, op_update a op_delete s kontrolou optimistického zamykání (lastchange).
+Všechny testy (tests/db/test_TagEntityModel.py, tests/db/test_TagModel.py, tests/test_architecture.py, tests/test_dependencies.py) úspěšně proběhly.
+
+
+
+
+
+Databáze byla naplněna daty (seed data v systemdata.json a inicializace v src/DBDefinitions/seed.py).
+
+Vloženo bylo 10 definic tagů a 10 přiřazení tagů k entitám, které pokrývají reálné scénáře včetně příkladu ze zadání (Project A → „Důležité“, „K projednání“):
+
+1. Vložené tagy (tags – 10 záznamů)
+
+
+#	id	name	label	color	description
+1	b0000000-0000-0000-0000-000000000001	important	Důležité	#ff4d4f	Vysoká priorita vyžadující okamžitou pozornost
+2	b0000000-0000-0000-0000-000000000002	review	K projednání	#fa8c16	Určeno k projednání na nejbližší poradě či schůzce
+3	b0000000-0000-0000-0000-000000000003	in_progress	V řešení	#1890ff	Aktivně se na položce pracuje
+4	b0000000-0000-0000-0000-000000000004	completed	Dokončeno	#52c41a	Úkol nebo položka byla úspěšně dokončena
+5	b0000000-0000-0000-0000-000000000005	archive	K archivaci	#8c8c8c	Položka je uzavřena a připravena k archivaci
+6	b0000000-0000-0000-0000-000000000006	project_a	Projekt A	#722ed1	Interní projekt Alfa pro vývoj informačního systému
+7	b0000000-0000-0000-0000-000000000007	project_b	Projekt B	#eb2f96	Interní projekt Beta pro infrastrukturu
+8	b0000000-0000-0000-0000-000000000008	urgent	Urgentní	#f5222d	Kritická záležitost s nejvyšší eskalací
+9	b0000000-0000-0000-0000-000000000009	idea	Nápad	#faad14	Návrh na vylepšení či novou funkcionalitu
+10	b0000000-0000-0000-0000-000000000010	bug	Chyba	#d4380d	Nahlášená vada či chyba k odstranění
+2. Vložená přiřazení (tag_entities – 10 záznamů)
+
+
+#	id	entity_id (Cílová entita)	Přiřazený tag (tag_id)	Vlastník (owner_id)
+1	c0000000-...0001	11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa (Project A)	Důležité (b0000000-...0001)	22222222-...0001
+2	c0000000-...0002	11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa (Project A)	K projednání (b0000000-...0002)	22222222-...0001
+3	c0000000-...0003	11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa (Project A)	V řešení (b0000000-...0003)	22222222-...0001
+4	c0000000-...0004	11111111-bbbb-bbbb-bbbb-bbbbbbbbbbbb (Project B)	Projekt B (b0000000-...0007)	22222222-...0002
+5	c0000000-...0005	11111111-bbbb-bbbb-bbbb-bbbbbbbbbbbb (Project B)	Dokončeno (b0000000-...0004)	22222222-...0002
+6	c0000000-...0006	33333333-cccc-cccc-cccc-cccccccccccc (Událost 1)	K projednání (b0000000-...0002)	22222222-...0001
+7	c0000000-...0007	33333333-cccc-cccc-cccc-cccccccccccc (Událost 1)	Urgentní (b0000000-...0008)	22222222-...0003
+8	c0000000-...0008	44444444-dddd-dddd-dddd-dddddddddddd (Úkol 1)	Chyba (b0000000-...0010)	22222222-...0002
+9	c0000000-...0009	44444444-dddd-dddd-dddd-dddddddddddd (Úkol 1)	V řešení (b0000000-...0003)	22222222-...0002
+10	c0000000-...0010	55555555-eeee-eeee-eeee-eeeeeeeeeeee (Podnět 1)	Nápad (b0000000-...0009)	22222222-...0001
+3. Integrace a ověření
+src/DBDefinitions/seed.py:
+init_database_data automaticky importuje TagModel a TagEntityModel z systemdata.json.
+Seed operace je plně idempotentní (opakované spuštění nepřepíše ani nezdvojí záznamy).
+Testy:
+Do tests/db/test_TagModel.py byl přidán test test_database_seed_with_10_tags_and_entities, který načtení všech 10 tagů a 10 vazeb ověřuje včetně Project A.
+Všechny testy v repozitáři úspěšně prošly (12/12 v tests/db/).

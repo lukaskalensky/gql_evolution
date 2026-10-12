@@ -59,7 +59,7 @@ async def init_database_data(session: AsyncSession, get_demodata=get_demodata) -
     TypeNames = [
         Model.__name__
         for Model in Models
-        if Model.__name__.endswith("TypeModel")
+        if Model.__name__.endswith("TypeModel") or Model.__name__ in ("TagModel", "TagEntityModel")
     ]
 
     isDemo = os.environ.get("DEMODATA", None) in ["True", "true", True]
@@ -82,12 +82,12 @@ async def init_database_data(session: AsyncSession, get_demodata=get_demodata) -
     modelIndex = dict((DBModel.__tablename__, DBModel) for DBModel in ModelsToImport)
     print(f"Models to import: {ModelsToImport}\nTable names: {table_names}\nModel index: {modelIndex}", flush=True)
 
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+    session_factory_inner = async_sessionmaker(session.bind, expire_on_commit=False, class_=AsyncSession)
     @asynccontextmanager
     async def session_maker():
-        try:
-            yield session
-        finally:
-            pass
+        async with session_factory_inner() as s:
+            yield s
 
     await ImportModels(session_maker, ModelsToImport, json_data)
 

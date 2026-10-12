@@ -4,6 +4,149 @@
     "events": [
     ],
     "event_invitations": [
+    ],
+    "tags": [
+        {
+            "id": "b0000000-0000-0000-0000-000000000001",
+            "name": "important",
+            "label": "Důležité",
+            "color": "#ff4d4f",
+            "description": "Vysoká priorita vyžadující okamžitou pozornost"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000002",
+            "name": "review",
+            "label": "K projednání",
+            "color": "#fa8c16",
+            "description": "Určeno k projednání na nejbližší poradě či schůzce"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000003",
+            "name": "in_progress",
+            "label": "V řešení",
+            "color": "#1890ff",
+            "description": "Aktivně se na položce pracuje"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000004",
+            "name": "completed",
+            "label": "Dokončeno",
+            "color": "#52c41a",
+            "description": "Úkol nebo položka byla úspěšně dokončena"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000005",
+            "name": "archive",
+            "label": "K archivaci",
+            "color": "#8c8c8c",
+            "description": "Položka je uzavřena a připravena k archivaci"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000006",
+            "name": "project_a",
+            "label": "Projekt A",
+            "color": "#722ed1",
+            "description": "Interní projekt Alfa pro vývoj informačního systému"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000007",
+            "name": "project_b",
+            "label": "Projekt B",
+            "color": "#eb2f96",
+            "description": "Interní projekt Beta pro infrastrukturu"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000008",
+            "name": "urgent",
+            "label": "Urgentní",
+            "color": "#f5222d",
+            "description": "Kritická záležitost s nejvyšší eskalací"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000009",
+            "name": "idea",
+            "label": "Nápad",
+            "color": "#faad14",
+            "description": "Návrh na vylepšení či novou funkcionalitu"
+        },
+        {
+            "id": "b0000000-0000-0000-0000-000000000010",
+            "name": "bug",
+            "label": "Chyba",
+            "color": "#d4380d",
+            "description": "Nahlášená vada či chyba k odstranění"
+        }
+    ],
+    "tag_entities": [
+        {
+            "id": "c0000000-0000-0000-0000-000000000001",
+            "entity_id": "11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "entity_type_id": "99999999-0000-0000-0000-000000000001",
+            "tag_id": "b0000000-0000-0000-0000-000000000001",
+            "owner_id": "22222222-0000-0000-0000-000000000001"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000002",
+            "entity_id": "11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "entity_type_id": "99999999-0000-0000-0000-000000000001",
+            "tag_id": "b0000000-0000-0000-0000-000000000002",
+            "owner_id": "22222222-0000-0000-0000-000000000001"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000003",
+            "entity_id": "11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "entity_type_id": "99999999-0000-0000-0000-000000000001",
+            "tag_id": "b0000000-0000-0000-0000-000000000003",
+            "owner_id": "22222222-0000-0000-0000-000000000001"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000004",
+            "entity_id": "11111111-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+            "entity_type_id": "99999999-0000-0000-0000-000000000001",
+            "tag_id": "b0000000-0000-0000-0000-000000000007",
+            "owner_id": "22222222-0000-0000-0000-000000000002"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000005",
+            "entity_id": "11111111-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+            "entity_type_id": "99999999-0000-0000-0000-000000000001",
+            "tag_id": "b0000000-0000-0000-0000-000000000004",
+            "owner_id": "22222222-0000-0000-0000-000000000002"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000006",
+            "entity_id": "33333333-cccc-cccc-cccc-cccccccccccc",
+            "entity_type_id": "99999999-0000-0000-0000-000000000002",
+            "tag_id": "b0000000-0000-0000-0000-000000000002",
+            "owner_id": "22222222-0000-0000-0000-000000000001"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000007",
+            "entity_id": "33333333-cccc-cccc-cccc-cccccccccccc",
+            "entity_type_id": "99999999-0000-0000-0000-000000000002",
+            "tag_id": "b0000000-0000-0000-0000-000000000008",
+            "owner_id": "22222222-0000-0000-0000-000000000003"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000008",
+            "entity_id": "44444444-dddd-dddd-dddd-dddddddddddd",
+            "entity_type_id": "99999999-0000-0000-0000-000000000003",
+            "tag_id": "b0000000-0000-0000-0000-000000000010",
+            "owner_id": "22222222-0000-0000-0000-000000000002"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000009",
+            "entity_id": "44444444-dddd-dddd-dddd-dddddddddddd",
+            "entity_type_id": "99999999-0000-0000-0000-000000000003",
+            "tag_id": "b0000000-0000-0000-0000-000000000003",
+            "owner_id": "22222222-0000-0000-0000-000000000002"
+        },
+        {
+            "id": "c0000000-0000-0000-0000-000000000010",
+            "entity_id": "55555555-eeee-eeee-eeee-eeeeeeeeeeee",
+            "entity_type_id": "99999999-0000-0000-0000-000000000004",
+            "tag_id": "b0000000-0000-0000-0000-000000000009",
+            "owner_id": "22222222-0000-0000-0000-000000000001"
+        }
     ]
-
 }

@@ -92,3 +92,16 @@ async def init_database_data(session: AsyncSession, get_demodata=get_demodata) -
     await ImportModels(session_maker, ModelsToImport, json_data)
 
     print("Data initialized", flush=True)
+
+
+if __name__ == "__main__":
+    import asyncio
+    from src.DBDefinitions import startEngine, ComposeConnectionString
+
+    async def _main():
+        conn_str = ComposeConnectionString()
+        session_maker = await startEngine(conn_str, makeUp=True)
+        async with session_maker() as session:
+            await init_database_data(session)
+
+    asyncio.run(_main())

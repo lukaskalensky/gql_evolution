@@ -24,3 +24,4 @@ https://github.com/hrbolek/uoishelpers/archive/4e41615436d6effbe248d8503e4df3735
 
 pydantic-ai
 pydantic-ai-slim[web]
+pydantic-ai-harness

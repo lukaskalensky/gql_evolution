@@ -21,6 +21,8 @@ from src.DBDefinitions.BaseModel import BaseDBModel, UUIDColumn, UUIDFKey, IDTyp
 # je-li treba, muzete definovat modely obsahujici jen id polozku, na ktere se budete odkazovat
 #
 ###########################################################################################################################
+
+# Zde vytvorit TagModel
 class EventModel(BaseDBModel):
     __tablename__ = "events"
 

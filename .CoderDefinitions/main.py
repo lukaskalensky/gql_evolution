@@ -1,40 +1,32 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv  # <-- Přidáno
+from dotenv import load_dotenv
 
 import uvicorn
 from pydantic_ai import Agent
 from pydantic_ai.capabilities import LocalWorkspace
-from pydantic_ai.models.openai import OpenAIChatModel
-from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai_harness import Coder
 
-# Načte proměnné ze souboru .env v kořenu projektu
+# Načte proměnné z .env souboru
 load_dotenv()
 
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 
+# PydanticAI si automaticky načte klíč z GEMINI_API_KEY
+api_key = os.getenv("GEMINI_API_KEY") or os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("Chybí GEMINI_API_KEY (nebo OPENAI_API_KEY) v .env souboru.")
 
-def create_model() -> OpenAIChatModel:
-    base_url = os.getenv("OPENAI_BASE_URL", "https://chat.unob.cz/api")
-    api_key = os.getenv("OPENAI_API_KEY")
+os.environ["GEMINI_API_KEY"] = api_key
 
-    if not api_key:
-        raise ValueError("Chybí proměnná prostředí OPENAI_API_KEY. Přidej ji do .env souboru.")
+MODEL_NAME = os.getenv("MODEL_NAME", "gemini-3.8-flash")
 
-    provider = OpenAIProvider(
-        base_url=base_url,
-        api_key=api_key,
-    )
-
-    return OpenAIChatModel(
-        "gpt-5-nano",
-        provider=provider,
-    )
 
 def create_agent() -> Agent:
+    # Předání modelu přes standardní string 'google-gla:<model>'
+    # eliminuje potřebu importovat nestabilní třídy modelů a providerů
     return Agent(
-        create_model(),
+        f"google-gla:{MODEL_NAME}",
         capabilities=[
             LocalWorkspace(REPOSITORY_ROOT),
             Coder(REPOSITORY_ROOT),
@@ -70,8 +62,8 @@ def main():
 
     print("PydanticAI Coder")
     print(f"workspace: {REPOSITORY_ROOT}")
-    print(f"model: gpt-5-nano")
-    print(f"endpoint: https://chat.unob.cz/api")
+    print(f"model: {MODEL_NAME}")
+    print("provider: Google AI (native)")
     print("web: http://localhost:7932")
 
     uvicorn.run(

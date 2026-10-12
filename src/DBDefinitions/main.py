@@ -34,6 +34,14 @@ from sqlalchemy import inspect, select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.properties import ColumnProperty, RelationshipProperty
 
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv("environment.txt", override=False)
+    load_dotenv(".env", override=False)
+except ImportError:
+    pass
+
 from uoishelpers.dataloaders import prepareSelect
 
 from . import BaseDBModel, ComposeConnectionString, startEngine
@@ -52,7 +60,7 @@ def parse_payload(raw: str | None) -> JsonDict:
 
     if raw.startswith("@"):
         path = raw[1:]
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, "r", encoding="utf-8-sig") as f:
             return json.load(f)
 
     try:
@@ -454,6 +462,27 @@ async def op_get(session, model_cls: type, payload: JsonDict) -> JsonDict:
     )
 
 
+def normalize_where(where: typing.Any) -> typing.Any:
+    """
+    Normalizuje jednoduché filtry na formát očekávaný prepareSelect z uoishelpers.
+    Převede např. {"name": "Workshop"} na {"name": {"_eq": "Workshop"}}.
+    """
+    if not isinstance(where, dict):
+        return where
+
+    result: JsonDict = {}
+    for key, value in where.items():
+        if key in {"_and", "_or"} and isinstance(value, list):
+            result[key] = [normalize_where(item) for item in value]
+        elif key.startswith("_"):
+            result[key] = value
+        elif isinstance(value, dict):
+            result[key] = normalize_where(value)
+        else:
+            result[key] = {"_eq": value}
+    return result
+
+
 async def op_list(session, model_cls: type, payload: JsonDict) -> list[JsonDict]:
     where = payload.get("where", None)
     include = parse_include(payload)
@@ -466,7 +495,7 @@ async def op_list(session, model_cls: type, payload: JsonDict) -> list[JsonDict]
     if where is None:
         stmt = select(model_cls)
     else:
-        stmt = prepareSelect(model_cls, where)
+        stmt = prepareSelect(model_cls, normalize_where(where))
 
     for relationship_name in include:
         relationships = get_relationships(model_cls)
@@ -589,8 +618,17 @@ async def run_async(args: argparse.Namespace) -> typing.Any:
     model_cls = resolve_entity(args.entity)
     payload = parse_payload(args.payload)
 
+    if getattr(args, "host", None):
+        import os
+
+        os.environ["POSTGRES_HOST"] = args.host
+
+    connection_string = (
+        getattr(args, "connection_string", None) or ComposeConnectionString()
+    )
+
     session_maker = await startEngine(
-        ComposeConnectionString(),
+        connection_string,
         makeDrop=args.drop,
         makeUp=not args.no_makeup,
     )
@@ -660,6 +698,18 @@ def create_arg_parser() -> argparse.ArgumentParser:
         "--no-makeup",
         action="store_true",
         help="Do not call BaseModel.metadata.create_all",
+    )
+
+    parser.add_argument(
+        "--host",
+        default=None,
+        help="Database host[:port] (sets POSTGRES_HOST, e.g. postgres:5432 or 172.19.0.1:5432)",
+    )
+
+    parser.add_argument(
+        "--connection-string",
+        default=None,
+        help="Explicit database connection string (e.g. postgresql+asyncpg://...)",
     )
 
     return parser

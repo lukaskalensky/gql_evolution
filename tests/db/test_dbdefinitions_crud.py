@@ -47,6 +47,7 @@ from src.DBDefinitions.main import (
     op_update,
     op_delete,
     serialize_instance,
+    normalize_where,
 )
 
 
@@ -439,3 +440,25 @@ async def test_dbdefinitions_get_existing_rows(
 
     if checked == 0:
         pytest.skip("No existing rows found in any mapped entity")
+
+
+@pytest.mark.asyncio
+async def test_dbdefinitions_list_with_simple_where_filter(
+    db_session,
+):
+    """
+    Ověří, že op_list funguje i pro jednoduché zadání filtru např.
+    {"where": {"name": "Workshop"}}, aniž by padal na uoishelpers prepareSelect.
+    """
+    from src.DBDefinitions import EventModel
+
+    rows = await op_list(
+        db_session,
+        EventModel,
+        {
+            "where": {"name": "NonExistingEventName12345"},
+            "limit": 5,
+        },
+    )
+    assert isinstance(rows, list)
+    assert len(rows) == 0

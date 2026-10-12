@@ -1,0 +1,59 @@
+Vše je nastaveno a připraveno. V rámci repozitáře byly provedeny následující úpravy, aby příkaz fungoval spolehlivě:
+
+Co bylo nastaveno a upraveno v kódu
+Oprava filtru v src/DBDefinitions/main.py (normalize_where)
+Knihovna uoishelpers.prepareSelect interně vyžaduje operátorový tvar filtru (např. {"name": {"_eq": "Workshop"}}). Pokud se zadal jednoduchý zápis {"where": {"name": "Workshop"}}, kód havaroval s chybou AttributeError: 'str' object has no attribute 'keys'.
+Byla implementována normalizace normalize_where, která jednoduché hodnoty automaticky zabalí do _eq. Formát {"where": {"name": "Workshop"}} nyní plně funguje.
+Podpora UTF-8 BOM u souborů (@payload.json)
+Načítání souborů v parse_payload bylo upraveno na kódování utf-8-sig. Soubory vytvořené ve Windows (např. přes Notepad nebo PowerShell), které obsahují BOM, už nezpůsobí JSONDecodeError.
+Nové CLI parametry --host a --connection-string
+Do main.py byly přidány parametry --host a --connection-string. Není nutné ručně nastavovat globální environment proměnné v shellu – cíl databáze lze předat přímo argumentem.
+Automatické načítání environment.txt / .env
+main.py při startu načte environment.txt nebo .env přes python-dotenv (pokud proměnné již nejsou nastaveny v prostředí).
+Testy
+Do tests/db/test_dbdefinitions_crud.py byl přidán automatický test test_dbdefinitions_list_with_simple_where_filter, který ověřuje funkčnost tohoto typu filtru.
+Jak příkaz spustit
+Varianta 1: Jste v terminálu uvnitř kontejneru aplikace
+(např. v Dev Containeru nebo přes bash session)
+
+Pokud znáte název/adresu kontejneru databáze:
+bash
+
+
+python -m src.DBDefinitions.main Event list '{"where": {"name": "Workshop"}}' --host <db_container>:5432
+(např. --host postgres:5432 nebo --host 172.19.0.1:5432)
+Pomocí souboru payload.json:
+bash
+
+
+python -m src.DBDefinitions.main Event list @payload.json --host <db_container>:5432
+Při nastavení v environment.txt: Pokud v souboru environment.txt nastavíte:
+properties
+
+
+POSTGRES_HOST=<db_container>:5432
+pak stačí volat přímo původní příkaz bez dalších parametrů:
+bash
+
+
+python -m src.DBDefinitions.main Event list '{"where": {"name": "Workshop"}}'
+Varianta 2: Spouštíte příkaz z hostitelského počítače přes docker exec
+bash
+
+
+docker exec -it <app_container> python -m src.DBDefinitions.main Event list '{"where": {"name": "Workshop"}}' --host <db_container>:5432
+Ověření funkčnosti
+Příkaz byl otestován proti běžící databázi:
+
+bash
+
+
+POSTGRES_HOST=172.19.0.1:5432 python -m src.DBDefinitions.main Event list '{"where": {"name": "Workshop"}}'
+Výsledek:
+
+json
+
+
+BaseDBModel.metadata.create_all finished
+[]
+Po vložení testovacího záznamu {"name": "Workshop"} byl úspěšně vyfiltrován a následně smazán. Všechny integrační testy v tests/db/test_dbdefinitions_crud.py procházejí.

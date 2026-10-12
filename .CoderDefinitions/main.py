@@ -12,24 +12,23 @@ load_dotenv()
 
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 
-# PydanticAI si automaticky načte klíč z GEMINI_API_KEY
-api_key = os.getenv("GEMINI_API_KEY") or os.getenv("OPENAI_API_KEY")
+# PydanticAI pro google: provider používá GOOGLE_API_KEY nebo GEMINI_API_KEY
+api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or os.getenv("OPENAI_API_KEY")
 if not api_key:
-    raise ValueError("Chybí GEMINI_API_KEY (nebo OPENAI_API_KEY) v .env souboru.")
+    raise ValueError("Chybí GOOGLE_API_KEY (nebo GEMINI_API_KEY) v .env souboru.")
 
+os.environ["GOOGLE_API_KEY"] = api_key
 os.environ["GEMINI_API_KEY"] = api_key
 
 MODEL_NAME = os.getenv("MODEL_NAME", "gemini-3.8-flash")
 
 
 def create_agent() -> Agent:
-    # Předání modelu přes standardní string 'google-gla:<model>'
-    # eliminuje potřebu importovat nestabilní třídy modelů a providerů
     return Agent(
-        f"google-gla:{MODEL_NAME}",
+        f"google:{MODEL_NAME}",
         capabilities=[
             LocalWorkspace(REPOSITORY_ROOT),
-            Coder(REPOSITORY_ROOT),
+            Coder(),  # Bez argumentu, workspace řeší LocalWorkspace výše
         ],
         instructions="""
 You are a coding agent working on this repository.

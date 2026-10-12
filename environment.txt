@@ -1,3 +1,7 @@
 DEMO=True
 DEMODATA=True
 GQLUG_ENDPOINT_URL=http://localhost:33007/api/gql
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=example
+POSTGRES_DB=data
+POSTGRES_HOST=host.docker.internal:5432

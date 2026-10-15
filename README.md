@@ -1,3 +1,48 @@
+# gql_metadata / Tags
+
+Subgraf pro systém uživatelských tagů, které lze přiřazovat k libovolným entitám informačního systému
+(např. `Project A` → „Důležité“, „K projednání“).
+
+Autoři: Lukáš Kalenský, Jan Jasanský. Vychází ze vzorového projektu `gql_evolution`, větev `2026`.
+
+## Datový model (1. PD – databázová vrstva)
+
+| Tabulka | Model | Popis |
+|---|---|---|
+| `tagtypes` | `TagTypeModel` | Číselník typů tagů jako strom (`parent_id`), např. Tagy → Priorita / Stav / Projekt / Kategorie |
+| `tags` | `TagModel` | Definice tagu: `name`, `label`, `color`, `description`, `type_id` → `tagtypes` |
+| `tag_entities` | `TagEntityModel` | Přiřazení tagu k entitě: `entity_id`, `entity_type_id`, `tag_id` → `tags`, `owner_id` |
+
+Modely jsou v `src/DBDefinitions/Domain_Tags/`, demo data v `systemdata.json`
+(`tagtypes` se importují vždy jako číselník, `tags` a `tag_entities` jen s `DEMODATA=True`).
+Testy DB vrstvy: `tests/db/test_TagTypeModel.py`, `tests/db/test_TagModel.py`, `tests/db/test_TagEntityModel.py`.
+
+## Deníček
+
+### 2026-10-05
+- Nastavení repozitáře a prostředí (commity `hesla`, `zkouska siren`).
+
+### 2026-10-08
+- Zprovoznění dev containeru a nástroje Coder (`Pridani do dev Container a zprovozneni Codera`, `Coder`).
+
+### 2026-10-12
+- Přidány DB modely `TagModel` a `TagEntityModel` v doméně `Domain_Tags`, export přes `src/DBDefinitions`.
+- Demo data: 10 tagů a 10 přiřazení (včetně scénáře Project A → Důležité, K projednání) v `systemdata.json`.
+- Testy modelů nad in-memory SQLite a nad CLI `src/DBDefinitions/main.py`.
+- Úprava importu dat do databáze (`pro import databaze`).
+
+### 2026-10-15
+- Doplněn číselník typů tagů `TagTypeModel` jako strom (požadavek „typy implementujte jako stromy“), `TagModel.type_id`.
+- Seed: odstraněna výjimka, která importovala tagy i bez `DEMODATA`; číselník `tagtypes` se importuje automaticky díky sufixu `TypeModel`.
+- Testy stromu typů a seedu s/bez demo dat.
+
+### Otevřené problémy
+- Testy ze šablony, které vyžadují běžící PostgreSQL (`postgres_gql`), lokálně bez docker compose nejdou spustit.
+- 2 unit testy `BaseService.ExecuteServiceMethod` ze šablony selhávají i bez našich změn.
+- `entity_type_id` a `owner_id` jsou zatím jen UUID bez vazby (entity a uživatelé patří jiným subgrafům).
+
+---
+
 # Event boilerplate project
 
 Demonstrační boilerplate pro doménu `Event / EventInvitation` podle funkčního vzoru ze `src.zip`.

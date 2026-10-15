@@ -1,9 +1,38 @@
 {
-    "eventtypes": [
-    ],
-    "events": [
-    ],
-    "event_invitations": [
+    "eventtypes": [],
+    "events": [],
+    "event_invitations": [],
+    "tagtypes": [
+        {
+            "id": "a0000000-0000-0000-0000-000000000001",
+            "name": "Tagy",
+            "name_en": "Tags",
+            "parent_id": null
+        },
+        {
+            "id": "a0000000-0000-0000-0000-000000000002",
+            "name": "Priorita",
+            "name_en": "Priority",
+            "parent_id": "a0000000-0000-0000-0000-000000000001"
+        },
+        {
+            "id": "a0000000-0000-0000-0000-000000000003",
+            "name": "Stav",
+            "name_en": "State",
+            "parent_id": "a0000000-0000-0000-0000-000000000001"
+        },
+        {
+            "id": "a0000000-0000-0000-0000-000000000004",
+            "name": "Projekt",
+            "name_en": "Project",
+            "parent_id": "a0000000-0000-0000-0000-000000000001"
+        },
+        {
+            "id": "a0000000-0000-0000-0000-000000000005",
+            "name": "Kategorie",
+            "name_en": "Category",
+            "parent_id": "a0000000-0000-0000-0000-000000000001"
+        }
     ],
     "tags": [
         {
@@ -11,70 +40,80 @@
             "name": "important",
             "label": "Důležité",
             "color": "#ff4d4f",
-            "description": "Vysoká priorita vyžadující okamžitou pozornost"
+            "description": "Vysoká priorita vyžadující okamžitou pozornost",
+            "type_id": "a0000000-0000-0000-0000-000000000002"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000002",
             "name": "review",
             "label": "K projednání",
             "color": "#fa8c16",
-            "description": "Určeno k projednání na nejbližší poradě či schůzce"
+            "description": "Určeno k projednání na nejbližší poradě či schůzce",
+            "type_id": "a0000000-0000-0000-0000-000000000003"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000003",
             "name": "in_progress",
             "label": "V řešení",
             "color": "#1890ff",
-            "description": "Aktivně se na položce pracuje"
+            "description": "Aktivně se na položce pracuje",
+            "type_id": "a0000000-0000-0000-0000-000000000003"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000004",
             "name": "completed",
             "label": "Dokončeno",
             "color": "#52c41a",
-            "description": "Úkol nebo položka byla úspěšně dokončena"
+            "description": "Úkol nebo položka byla úspěšně dokončena",
+            "type_id": "a0000000-0000-0000-0000-000000000003"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000005",
             "name": "archive",
             "label": "K archivaci",
             "color": "#8c8c8c",
-            "description": "Položka je uzavřena a připravena k archivaci"
+            "description": "Položka je uzavřena a připravena k archivaci",
+            "type_id": "a0000000-0000-0000-0000-000000000003"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000006",
             "name": "project_a",
             "label": "Projekt A",
             "color": "#722ed1",
-            "description": "Interní projekt Alfa pro vývoj informačního systému"
+            "description": "Interní projekt Alfa pro vývoj informačního systému",
+            "type_id": "a0000000-0000-0000-0000-000000000004"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000007",
             "name": "project_b",
             "label": "Projekt B",
             "color": "#eb2f96",
-            "description": "Interní projekt Beta pro infrastrukturu"
+            "description": "Interní projekt Beta pro infrastrukturu",
+            "type_id": "a0000000-0000-0000-0000-000000000004"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000008",
             "name": "urgent",
             "label": "Urgentní",
             "color": "#f5222d",
-            "description": "Kritická záležitost s nejvyšší eskalací"
+            "description": "Kritická záležitost s nejvyšší eskalací",
+            "type_id": "a0000000-0000-0000-0000-000000000002"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000009",
             "name": "idea",
             "label": "Nápad",
             "color": "#faad14",
-            "description": "Návrh na vylepšení či novou funkcionalitu"
+            "description": "Návrh na vylepšení či novou funkcionalitu",
+            "type_id": "a0000000-0000-0000-0000-000000000005"
         },
         {
             "id": "b0000000-0000-0000-0000-000000000010",
             "name": "bug",
             "label": "Chyba",
             "color": "#d4380d",
-            "description": "Nahlášená vada či chyba k odstranění"
+            "description": "Nahlášená vada či chyba k odstranění",
+            "type_id": "a0000000-0000-0000-0000-000000000005"
         }
     ],
     "tag_entities": [

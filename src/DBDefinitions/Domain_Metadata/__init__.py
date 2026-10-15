@@ -1,3 +1,3 @@
-from src.DBDefinitions.Domain_Tags import TagModel, TagEntityModel
+from src.DBDefinitions.Domain_Tags import TagTypeModel, TagModel, TagEntityModel
 
-__all__ = ["TagModel", "TagEntityModel"]
+__all__ = ["TagTypeModel", "TagModel", "TagEntityModel"]

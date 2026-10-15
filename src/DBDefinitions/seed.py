@@ -59,7 +59,7 @@ async def init_database_data(session: AsyncSession, get_demodata=get_demodata) -
     TypeNames = [
         Model.__name__
         for Model in Models
-        if Model.__name__.endswith("TypeModel") or Model.__name__ in ("TagModel", "TagEntityModel")
+        if Model.__name__.endswith("TypeModel")
     ]
 
     isDemo = os.environ.get("DEMODATA", None) in ["True", "true", True]

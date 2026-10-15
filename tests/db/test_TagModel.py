@@ -273,10 +273,12 @@ async def test_main_cli_operations_with_tags(sqlite_session):
 
 
 @pytest.mark.asyncio
-async def test_database_seed_with_10_tags_and_entities(sqlite_session):
+async def test_database_seed_with_10_tags_and_entities(sqlite_session, monkeypatch):
     """Verify that systemdata.json seeds 10 tags and 10 tag entity assignments."""
     from src.DBDefinitions.seed import init_database_data
 
+    # Tagy a jejich přiřazení jsou demo data, importují se jen s DEMODATA=True
+    monkeypatch.setenv("DEMODATA", "True")
     await init_database_data(sqlite_session)
 
     # 1. Verify 10 Tags

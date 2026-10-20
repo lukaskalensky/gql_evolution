@@ -112,7 +112,7 @@ class BaseService(typing.Generic[T]):
             logger.exception("Database service operation failed")
             return await cls.call_callback(
                 Error,
-                msg=f"Database error: {e} code({getattr(e, 'code', 'unknown')})",
+                msg="Database operation failed",
                 exception=e,
                 code=getattr(e, 'code', 'unknown'),
             )
@@ -132,6 +132,9 @@ class BaseService(typing.Generic[T]):
                 Error,
                 msg="Unexpected service error",
                 code=code,
+                filename=None,
+                lineno=None,
+                exception=e,
             )
 
     @classmethod

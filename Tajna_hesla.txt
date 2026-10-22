@@ -1,3 +1,2 @@
-pgadmin: anoyne@anywhere.com  example
-db: host.docker.internal postgres example
-zkouska siren 
+pgadmin: anoyne@anywhere.com  ,heslo: example
+db: host.docker.internal postgres ,heslo: example

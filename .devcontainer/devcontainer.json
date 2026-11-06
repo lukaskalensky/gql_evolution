@@ -1,5 +1,5 @@
 {
-  "name": "GraphQL Subgraph + AI Coder",
+  "name": "Nase_GraphQL Subgraph + AI Coder",
 
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",

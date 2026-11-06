@@ -55,3 +55,5 @@ class TagModel(BaseDBModel):
         uselist=True,
         init=False,
     )
+
+#Pridat relationship

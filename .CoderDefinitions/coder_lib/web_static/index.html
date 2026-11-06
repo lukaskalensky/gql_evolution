@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coder</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="identity">
+      <strong>Coder</strong>
+      <span id="workspace" class="muted truncate"></span>
+      <span id="model" class="muted truncate model"></span>
+    </div>
+    <nav class="actions" aria-label="Akce">
+      <span id="connection" class="connection" role="status">Připojuji…</span>
+      <button id="btn-diff" type="button">Změny</button>
+      <button id="btn-plan" type="button">Plán</button>
+      <button id="btn-undo" type="button">Vrátit krok</button>
+      <button id="btn-clear" type="button">Nová konverzace</button>
+    </nav>
+  </header>
+
+  <main id="log" class="log" aria-live="polite">
+    <div id="empty" class="empty" hidden>
+      <h1>Na čem budeme pracovat?</h1>
+      <p class="muted">Zeptejte se na kód, nebo zadejte úpravu. Agent čte a mění soubory ve vybraném projektu.</p>
+    </div>
+  </main>
+
+  <footer class="composer-wrap">
+    <div id="status" class="status" role="status" hidden></div>
+    <form id="composer" class="composer">
+      <textarea id="input" rows="1" placeholder="Napište zprávu…" aria-label="Zpráva pro agenta"></textarea>
+      <button id="btn-send" class="primary" type="submit">Odeslat</button>
+      <button id="btn-stop" class="danger" type="button" hidden>Zastavit</button>
+    </form>
+    <p class="hint muted">Enter odešle, Shift+Enter přidá nový řádek</p>
+  </footer>
+
+  <dialog id="panel" class="panel">
+    <header>
+      <h2 id="panel-title"></h2>
+      <button id="panel-close" type="button">Zavřít</button>
+    </header>
+    <pre id="panel-body"></pre>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="small">
+    <h2 id="confirm-title"></h2>
+    <p id="confirm-text"></p>
+    <ul id="confirm-list" class="changes"></ul>
+    <div class="dialog-actions">
+      <button id="confirm-cancel" type="button">Zrušit</button>
+      <button id="confirm-ok" class="danger" type="button"></button>
+    </div>
+  </dialog>
+
+  <dialog id="token-dialog" class="small">
+    <form id="token-form">
+      <h2>Přístupový token</h2>
+      <p>Otevřete odkaz vypsaný serverem při spuštění, nebo sem token vložte.</p>
+      <input id="token-input" type="password" autocomplete="off" aria-label="Přístupový token">
+      <div class="dialog-actions">
+        <button class="primary" type="submit">Připojit</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

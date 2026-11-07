@@ -7,6 +7,7 @@ if typing.TYPE_CHECKING:
     from src.ServiceDefinitions.Domain_Events.EventService import EventService as _EventService
     from src.ServiceDefinitions.Domain_Events.EventInvitationService import EventInvitationService as _EventInvitationService
     from src.ServiceDefinitions.Domain_Tags.TagTypeService import TagTypeService as _TagTypeService
+    from src.ServiceDefinitions.Domain_Tags.TagService import TagService as _TagService
 
 
 @dataclasses.dataclass(frozen=True)
@@ -25,6 +26,11 @@ class ServiceRegistry:
     def TagTypeService(self) -> type['_TagTypeService']:
         from src.ServiceDefinitions.Domain_Tags.TagTypeService import TagTypeService
         return TagTypeService
+
+    @property
+    def TagService(self) -> type['_TagService']:
+        from src.ServiceDefinitions.Domain_Tags.TagService import TagService
+        return TagService
 
 
 SERVICES = ServiceRegistry()

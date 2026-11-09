@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -47,25 +47,22 @@ class TagTypeModel(BaseDBModel):
         comment="nadřazený typ tagu (kořen stromu má None)"
     )
 
-    parent: Mapped[Optional["TagTypeModel"]] = relationship(
+    parent = relationship(
         "TagTypeModel",
         back_populates="children",
         remote_side="TagTypeModel.id",
         uselist=False,
-        init=False,
     )
 
-    children: Mapped[List["TagTypeModel"]] = relationship(
+    children = relationship(
         "TagTypeModel",
         back_populates="parent",
         uselist=True,
-        init=False,
     )
 
-    tags: Mapped[List["TagModel"]] = relationship(
+    tags = relationship(
         "TagModel",
         back_populates="type",
         viewonly=True,
         uselist=True,
-        init=False,
     )

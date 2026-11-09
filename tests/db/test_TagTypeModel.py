@@ -118,4 +118,4 @@ async def test_seed_with_demodata_links_tags_to_types(sqlite_session, monkeypatc
     assert all(t.type_id in type_ids for t in tags)
 
     important = next(t for t in tags if t.name == "important")
-    assert important.type_id == uuid.UUID("a0000000-0000-0000-0000-000000000002")
+    assert important.type_id == uuid.UUID("3c4e25d8-888b-4c76-862f-7067f067565a")

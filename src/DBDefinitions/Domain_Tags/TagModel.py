@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -41,19 +41,17 @@ class TagModel(BaseDBModel):
         comment="typ tagu (uzel stromu číselníku tagtypes)"
     )
 
-    type: Mapped[Optional["TagTypeModel"]] = relationship(
+    type = relationship(
         "TagTypeModel",
         back_populates="tags",
         viewonly=True,
         uselist=False,
-        init=False,
     )
 
-    tag_entities: Mapped[List["TagEntityModel"]] = relationship(
+    tag_entities = relationship(
         "TagEntityModel",
         back_populates="tag",
         uselist=True,
-        init=False,
     )
 
 #Pridat relationship

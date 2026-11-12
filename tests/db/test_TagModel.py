@@ -306,7 +306,7 @@ async def test_database_seed_with_10_tags_and_entities(sqlite_session, monkeypat
     assert len(entities) == 10
 
     # 3. Verify Project A assignments
-    project_a_id = uuid.UUID("11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+    project_a_id = uuid.UUID("5e812d9b-1b2a-4a08-874c-8d573e19d724")
     stmt = (
         select(TagEntityModel)
         .where(TagEntityModel.entity_id == project_a_id)

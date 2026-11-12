@@ -31,9 +31,8 @@ class TagEntityModel(BaseDBModel):
         comment="vlastník tohoto přiřazení"
     )
 
-    tag: Mapped[Optional["TagModel"]] = relationship(
+    tag = relationship(
         "TagModel",
         back_populates="tag_entities",
         uselist=False,
-        init=False,
     )

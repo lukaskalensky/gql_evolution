@@ -36,10 +36,38 @@ Testy DB vrstvy: `tests/db/test_TagTypeModel.py`, `tests/db/test_TagModel.py`, `
 - Seed: odstraněna výjimka, která importovala tagy i bez `DEMODATA`; číselník `tagtypes` se importuje automaticky díky sufixu `TypeModel`.
 - Testy stromu typů a seedu s/bez demo dat.
 
+### 2026-10-20 – 2026-10-21
+- Práce na nástroji Coder (`.CoderDefinitions/main2.py`, lokální varianta `main3.py`).
+
+### 2026-10-22
+- Prezentace k 1. PD (`prezentace_1PD.md`), úprava demo dat v `systemdata.json`.
+
+### 2026-11-04 – 2026-11-12 (2. PD – vrstva služeb, větev `2pd-vrstva-sluzeb`)
+- Dataloadery `TagTypeModel`, `TagModel`, `TagEntityModel` v `LoaderMap`; testy služeb nad in-memory SQLite (`tests/services/conftest.py`).
+- Slovník chybových kódů (UUID) `ServiceDefinitions/Domain_Tags/ErrorCodes.py`.
+- Společný základ `BaseTagService`: kódované chyby, kontrola `lastchange` u update i delete.
+- `TagTypeService`: strom typů bez cyklů, typ nelze smazat, pokud má podtypy nebo tagy.
+- `TagService`: kontrola existence typu, tag nelze smazat, pokud je přiřazený.
+- `TagEntityService`: `AssignTag` (vlastníkem je přihlášený uživatel, bez duplicit), `UnassignTag` (smí jen vlastník), `ReadByEntity`, `ReadByTag`.
+- Oprava `relationship` v modelech tagů (loader je načítá bez lazy dotazu), oprava seed testů podle ID v `systemdata.json`.
+- Služby zaregistrovány v `ServiceRegistry`, větev sloučena do `2026`.
+
+### 2026-11-24 (GraphQL vrstva)
+- Nová doména `GraphTypeDefinitions/Domain_Tags/` napojená do kořenových `Query` a `Mutation`:
+  - `TagTypeGQLModel`: `tagTypeById`, `tagTypePage`, `tagTypeInsert/Update/Delete`, vazby `parent`, `children`, `tags`.
+  - `TagGQLModel`: `tagById`, `tagPage`, `tagInsert/Update/Delete`, vazby `type`, `tagEntities`.
+  - `TagEntityGQLModel`: `tagEntityById`, `tagEntityPage`, `tagEntityAssign`, `tagEntityUnassign`, vazby `tag`, `owner`.
+- Oprávnění: správa typů a tagů vyžaduje globální roli z `Domain_Tags/permissions.py`, přiřazovat tagy smí každý přihlášený uživatel.
+- Oprava `BaseGQLModel.from_db`: plní deklarovaná skalární pole z načteného řádku, aby `ScalarResolver` dostal hodnotu cizího klíče (dřív vztahy vracely `null`, týkalo se i Events).
+- Externí stuby `UserGQLModel` a `StateGQLModel` dostaly `resolve_reference` (dřív padalo `owner` / `user`).
+- Testy: `tests/graphql/test_tag_gql_explicit.py` (CRUD, strom, konflikty `lastchange`, blokované mazání, chybějící role, scénář Project A, odebrání jen vlastníkem) a unit test `from_db`.
+
 ### Otevřené problémy
 - Testy ze šablony, které vyžadují běžící PostgreSQL (`postgres_gql`), lokálně bez docker compose nejdou spustit.
 - 2 unit testy `BaseService.ExecuteServiceMethod` ze šablony selhávají i bez našich změn.
 - `entity_type_id` a `owner_id` jsou zatím jen UUID bez vazby (entity a uživatelé patří jiným subgrafům).
+- Název role pro správu typů a tagů je zatím provizorní (`administrátor`), čeká na potvrzení.
+- Přiřazení tagu nejde upravit, jen odebrat a přiřadit znovu (služba nemá operaci update).
 
 ---
 

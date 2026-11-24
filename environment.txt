@@ -1,6 +1,6 @@
 DEMO=True
 DEMODATA=True
-GQLUG_ENDPOINT_URL=http://localhost:33007/api/gql
+GQLUG_ENDPOINT_URL=http://localhost:33001/api/gql
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=example
 POSTGRES_DB=data

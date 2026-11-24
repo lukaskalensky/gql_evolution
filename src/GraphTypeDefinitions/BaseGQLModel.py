@@ -53,7 +53,17 @@ class BaseGQLModel:
     def from_db(cls, db_row):
         if db_row is None:
             return None
-        return cls(id=db_row.id, _dbdata=db_row)
+        result = cls(id=db_row.id, _dbdata=db_row)
+        # Resolvery typu ScalarResolver čtou FK přes getattr(self, '<fk>_id'), proto se
+        # deklarovaná skalární pole naplní z již načtených hodnot řádku. Čte se jen
+        # vars(db_row), aby se u ORM instance nespustil lazy-load v async kontextu.
+        loaded = getattr(db_row, '__dict__', {})
+        definition = getattr(cls, '__strawberry_definition__', None)
+        for field in getattr(definition, 'fields', []):
+            name = field.python_name
+            if field.base_resolver is None and name != 'id' and name in loaded:
+                setattr(result, name, loaded[name])
+        return result
 
     @classmethod
     async def load_with_loader(cls, info: ApplicationInfo, id: IDType):

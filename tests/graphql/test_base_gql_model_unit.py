@@ -148,3 +148,26 @@ async def test_resolve_reference_applies_other_data_to_loaded_or_shell_model():
 
 #     delattr(model, "name")
 #     assert model.get_db_value("name", default="default") == "db name"
+
+
+def test_from_db_copies_loaded_scalar_fields_for_fk_resolvers():
+    """ScalarResolver čte FK přes getattr(self, ...); from_db proto plní deklarovaná pole."""
+    from src.GraphTypeDefinitions.Domain_Tags import TagGQLModel
+
+    class OrmLikeRow:
+        def __init__(self, **values):
+            self.__dict__.update(values)
+
+        @property
+        def created(self):  # nenačtený atribut ORM řádku nesmí být čten (lazy-load v async)
+            raise AssertionError("from_db must not touch attributes outside of __dict__")
+
+    type_id = uuid.uuid4()
+    row = OrmLikeRow(id=uuid.uuid4(), name="important", type_id=type_id, type="relationship must be skipped")
+
+    gql_model = TagGQLModel.from_db(row)
+
+    assert gql_model.type_id == type_id
+    assert gql_model.name == "important"
+    assert gql_model._dbdata is row
+    assert getattr(gql_model, "type", None) != "relationship must be skipped"
